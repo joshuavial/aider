@@ -28,7 +28,8 @@ class Model:
                     tokens = t
 
         if tokens is None:
-            raise ValueError(f"Unknown context window size for model: {name}")
+            #raise ValueError(f"Unknown context window size for model: {name}")
+            tokens = 1
 
         self.max_context_tokens = tokens * 1024
 
@@ -46,7 +47,7 @@ class Model:
 
             return
 
-        if self.is_gpt35():
+        if self.is_gpt35() or True:
             self.edit_format = "whole"
             self.always_available = True
 

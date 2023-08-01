@@ -17,7 +17,7 @@ class Commands:
     def __init__(self, io, coder):
         self.io = io
         self.coder = coder
-        self.tokenizer = tiktoken.encoding_for_model(coder.main_model.name)
+        self.tokenizer = tiktoken.encoding_for_model('gpt-4') #coder.main_model.name
 
     def is_command(self, inp):
         if inp[0] == "/":

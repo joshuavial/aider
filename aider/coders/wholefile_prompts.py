@@ -17,15 +17,15 @@ Once you understand the request you MUST:
     system_reminder = """To suggest changes to a file you MUST return the entire content of the updated file.
 You MUST use this *file listing* format:
 
-path/to/filename.js
 {fence[0]}
+#path/to/filename.js
 // entire file content ...
 // ... goes in between
 {fence[1]}
 
 Every *file listing* MUST use this format:
-- First line: the filename with any originally provided path
-- Second line: opening {fence[0]}
+- First line: opening {fence[0]}
+- Second line: the filename with any originally provided path
 - ... entire content of the file ...
 - Final line: closing {fence[1]}
 
