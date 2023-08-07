@@ -14,7 +14,6 @@ from aider.versioncheck import check_version
 
 from .dump import dump  # noqa: F401
 
-
 def get_git_root():
     """Try and guess the git repo, since the conf.yml can be at the repo root"""
     try:

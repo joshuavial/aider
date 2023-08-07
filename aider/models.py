@@ -3,6 +3,10 @@ import re
 known_tokens = {
     "gpt-3.5-turbo": 4,
     "gpt-4": 8,
+    "anthropic/claude-instant-v1": 100,
+    "anthropic/claude-2": 100,
+    "meta-llama/llama-2-70b-chat": 4,
+    "google/palm-2-codechat-bison": 8,
 }
 
 
@@ -58,6 +62,7 @@ class Model:
                 self.completion_price = 0.004
 
             return
+        return
 
         raise ValueError(f"Unsupported model: {name}")
 

@@ -44,6 +44,12 @@ def send_with_retries(model, messages, functions, stream):
     if hasattr(openai, "api_engine"):
         kwargs["engine"] = openai.api_engine
 
+    #Open Router needs these headers
+    kwargs["headers"] = {
+        "HTTP-Referer": "http://aider.chat",
+        "X-Title": "Aider"
+    }
+
     # Generate SHA1 hash of kwargs and append it to chat_completion_call_hashes
     hash_object = hashlib.sha1(json.dumps(kwargs, sort_keys=True).encode())
 
