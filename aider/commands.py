@@ -7,6 +7,7 @@ import git
 from prompt_toolkit.completion import Completion
 
 from aider import prompts, voice
+from aider.scrape import Scraper
 from aider.utils import is_gpt4_with_openai_base_url, is_image_file
 
 from .dump import dump  # noqa: F401
@@ -14,6 +15,7 @@ from .dump import dump  # noqa: F401
 
 class Commands:
     voice = None
+    scraper = None
 
     def __init__(self, io, coder, voice_language=None):
         self.io = io
@@ -24,6 +26,26 @@ class Commands:
 
         self.voice_language = voice_language
         self.tokenizer = coder.main_model.tokenizer
+
+    def cmd_web(self, args):
+        "Use headless selenium to scrape a webpage and add the content to the chat"
+        url = args.strip()
+        if not url:
+            self.io.tool_error("Please provide a URL to scrape.")
+            return
+
+        if not self.scraper:
+            self.scraper = Scraper(print_error=self.io.tool_error)
+
+        content = self.scraper.scrape(url) or ""
+        if content:
+            self.io.tool_output(content)
+
+        self.scraper.show_playwright_instructions()
+
+        content = f"{url}:\n\n" + content
+
+        return content
 
     def is_command(self, inp):
         return inp[0] in "/!"

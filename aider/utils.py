@@ -1,11 +1,12 @@
 import os
 import tempfile
 from pathlib import Path
+
 import git
 
-IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.tiff', '.webp'}
-
 from aider.dump import dump  # noqa: F401
+
+IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tiff", ".webp"}
 
 
 class IgnorantTemporaryDirectory:
@@ -65,10 +66,11 @@ def make_repo(path=None):
 
     return repo
 
+
 def is_image_file(file_name):
     """
     Check if the given file name has an image file extension.
-    
+
     :param file_name: The name of the file to check.
     :return: True if the file is an image, False otherwise.
     """
@@ -103,14 +105,15 @@ def show_messages(messages, title=None, functions=None):
     if functions:
         dump(functions)
 
+
 def is_gpt4_with_openai_base_url(model_name, client):
     """
     Check if the model_name starts with 'gpt-4' and the client base URL includes 'api.openai.com'.
-    
+
     :param model_name: The name of the model to check.
     :param client: The OpenAI client instance.
     :return: True if conditions are met, False otherwise.
     """
-    if client is None or not hasattr(client, 'base_url'):
+    if client is None or not hasattr(client, "base_url"):
         return False
     return model_name.startswith("gpt-4") and "api.openai.com" in client.base_url.host

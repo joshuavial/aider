@@ -59,6 +59,7 @@ See the [usage instructions](/#usage) to start coding with aider.
 The steps below are completely optional.
 
 - [Store your API key](#store-your-api-key-optional)
+- [Enable Playwright](#enable-playwright) to enhance the `/web <url>` command.
 - [Enable voice coding](#enable-voice-coding-optional)
 - [Add aider to your editor](#add-aider-to-your-editor-optional)
 - [Install development versions of aider](#install-development-versions-of-aider-optional)
@@ -77,6 +78,28 @@ Put a line in it like this to specify your api key:
 openai-api-key: sk-...
 ```
 
+## Enable Playwright
+
+Aider supports adding web pages to the chat with the `/web <url>` command.
+When you add a url to the chat, aider fetches the page and scrapes its
+content.
+
+By default, aider uses the `httpx` library to scrape web pages, but this only
+works on a subset of web pages.
+Some sites explicitly block requests from tools like httpx.
+Others rely heavily on javascript to render the page content,
+which isn't possible using only httpx.
+
+Aider works best with all web pages if you install
+Playwright's chromium browser and its dependencies:
+
+```
+playwright install --with-deps chromium
+```
+
+See the
+[Playwright for Python documentation](https://playwright.dev/python/docs/browsers#install-system-dependencies)
+for additional information.
 
 
 ## Enable voice coding (optional)

@@ -18,6 +18,9 @@ grep_ast
 packaging
 sounddevice
 soundfile
+beautifulsoup4
 PyYAML
 Pillow
 diff-match-patch
+playwright
+pypandoc
