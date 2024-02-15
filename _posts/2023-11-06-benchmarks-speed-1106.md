@@ -1,6 +1,14 @@
+---
+title: Speed benchmarks of GPT-4 Turbo and gpt-3.5-turbo-1106
+excerpt: This report provides a detailed comparison of the speed of GPT-4 Turbo and gpt-3.5-turbo-1106 models based on the aider benchmarking suite.
+redirect_from:
+  - /docs/benchmarks-speed-1106.html
+---
 # Speed benchmarks of GPT-4 Turbo and gpt-3.5-turbo-1106
 
-[![benchmark results](../assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
+<p class="post-date">{{ page.date | date: "%b %-d, %Y" }}</p>
+
+[![benchmark results](/assets/benchmarks-speed-1106.svg)](https://aider.chat/assets/benchmarks-speed-1106.svg)
 
 [OpenAI just released new versions of GPT-3.5 and GPT-4](https://openai.com/blog/new-models-and-developer-products-announced-at-devday),
 and there's a lot

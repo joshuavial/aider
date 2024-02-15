@@ -11,6 +11,8 @@
 - [How can I run aider locally from source code?](#how-can-i-run-aider-locally-from-source-code)
 - [Can I script aider?](#can-i-script-aider)
 - [What code languages does aider support?](#what-code-languages-does-aider-support)
+- [How to use pipx to avoid python package conflicts?](#how-to-use-pipx-to-avoid-python-package-conflicts)
+- [Can I specify guidelines or conventions?](#can-i-specify-guidelines-or-conventions)
 
 ## How does aider use git?
 
@@ -331,3 +333,38 @@ But aider should work quite well for other languages, even without repo map supp
 - Ruby
 - Rust
 - Typescript
+
+## How to use pipx to avoid python package conflicts?
+
+If you are using aider to work on a python project, sometimes your project will require
+specific versions of python packages which conflict with the versions that aider
+requires.
+If this happens, the `pip install` command may return errors like these:
+
+```
+aider-chat 0.23.0 requires somepackage==X.Y.Z, but you have somepackage U.W.V which is incompatible.
+```
+
+You can avoid this problem by installing aider using `pipx`,
+which will install it globally on your system
+within its own python environment.
+This way you can use aider to work on any python project,
+even if that project has conflicting dependencies.
+
+Install [pipx](https://pipx.pypa.io/stable/) then just do:
+
+```
+pipx install aider
+```
+
+## Can I specify guidelines or conventions?
+
+Sometimes you want GPT to be aware of certain coding guidelines,
+like whether to provide type hints, which libraries or packages
+to prefer, etc.
+
+Just put any extra instructions in a file
+like `INSTRUCTIONS.md` and then add it to the chat.
+
+For more details, see this documentation on
+[using an instructions file with aider](/docs/instructions.md).

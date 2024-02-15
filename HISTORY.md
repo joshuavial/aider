@@ -1,5 +1,16 @@
 # Release history
 
+### v0.24.1
+
+- Fixed bug with cost computations when --no-steam in effect
+
+### v0.24.0
+
+- New `/web <url>` command which scrapes the url, turns it into fairly clean markdown and adds it to the chat.
+- Updated all OpenAI model names, pricing info
+- Default GPT 3.5 model is now `gpt-3.5-turbo-0125`.
+- Bugfix to the `!` alias for `/run`.
+
 ### v0.23.0
 
 - Added support for `--model gpt-4-0125-preview` and OpenAI's alias `--model gpt-4-turbo-preview`. The `--4turbo` switch remains an alias for `--model gpt-4-1106-preview` at this time.

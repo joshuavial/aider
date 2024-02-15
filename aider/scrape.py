@@ -7,7 +7,6 @@ import httpx
 import pypandoc
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
-from pypandoc.pandoc_download import download_pandoc
 
 from aider import __version__
 
@@ -18,7 +17,7 @@ For better web scraping, install Playwright chromium with this command in your t
 
     playwright install --with-deps chromium
 
-See https://aider.chat/docs/install.html#enable-playwright for more info.
+See https://aider.chat/docs/install.html#enable-playwright-optional for more info.
 """
 
 
@@ -111,15 +110,14 @@ class Scraper:
         if self.pandoc_available:
             return
 
-        html = "<body></body>"
         try:
-            pypandoc.convert_text(html, "markdown", format="html")
+            pypandoc.get_pandoc_version()
             self.pandoc_available = True
             return
         except OSError:
             pass
 
-        download_pandoc()
+        pypandoc.download_pandoc(delete_installer=True)
         self.pandoc_available = True
 
     def html_to_markdown(self, page_source):
