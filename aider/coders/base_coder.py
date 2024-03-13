@@ -10,6 +10,7 @@ import traceback
 from json.decoder import JSONDecodeError
 from pathlib import Path
 
+import git
 import openai
 from jsonschema import Draft7Validator
 from rich.console import Console, Text
@@ -157,6 +158,15 @@ class Coder:
 
         self.commands = Commands(self.io, self, voice_language)
 
+        if use_git:
+            try:
+                self.repo = GitRepo(
+                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
+                )
+                self.root = self.repo.root
+            except FileNotFoundError:
+                self.repo = None
+
         for fname in fnames:
             fname = Path(fname)
             if not fname.exists():
@@ -167,16 +177,14 @@ class Coder:
             if not fname.is_file():
                 raise ValueError(f"{fname} is not a file")
 
-            self.abs_fnames.add(str(fname.resolve()))
+            fname = str(fname.resolve())
 
-        if use_git:
-            try:
-                self.repo = GitRepo(
-                    self.io, fnames, git_dname, aider_ignore_file, client=self.client
-                )
-                self.root = self.repo.root
-            except FileNotFoundError:
-                self.repo = None
+            if self.repo and self.repo.ignored_file(fname):
+                self.io.tool_error(f"Skipping {fname} that matches aiderignore spec.")
+                continue
+
+            self.abs_fnames.add(fname)
+            self.check_added_files()
 
         if self.repo:
             rel_repo_dir = self.repo.get_rel_repo_dir()
@@ -245,6 +253,7 @@ class Coder:
 
     def add_rel_fname(self, rel_fname):
         self.abs_fnames.add(self.abs_root_path(rel_fname))
+        self.check_added_files()
 
     def abs_root_path(self, path):
         res = Path(self.root) / path
@@ -709,6 +718,10 @@ class Coder:
         if self.verbose:
             print(completion)
 
+        if not completion.choices:
+            self.io.tool_error(str(completion))
+            return
+
         show_func_err = None
         show_content_err = None
         try:
@@ -886,6 +899,7 @@ class Coder:
                     self.repo.repo.git.add(full_path)
 
             self.abs_fnames.add(full_path)
+            self.check_added_files()
             return True
 
         if not self.io.confirm_ask(
@@ -898,9 +912,40 @@ class Coder:
             self.repo.repo.git.add(full_path)
 
         self.abs_fnames.add(full_path)
+        self.check_added_files()
         self.check_for_dirty_commit(path)
 
         return True
+
+    warning_given = False
+
+    def check_added_files(self):
+        if self.warning_given:
+            return
+
+        warn_number_of_files = 4
+        warn_number_of_tokens = 20 * 1024
+
+        num_files = len(self.abs_fnames)
+        if num_files < warn_number_of_files:
+            return
+
+        tokens = 0
+        for fname in self.abs_fnames:
+            relative_fname = self.get_rel_fname(fname)
+            if is_image_file(relative_fname):
+                continue
+            content = self.io.read_text(fname)
+            tokens += self.main_model.token_count(content)
+
+        if tokens < warn_number_of_tokens:
+            return
+
+        self.io.tool_error("Warning: it's best to only add files that need changes to the chat.")
+        self.io.tool_error(
+            "https://aider.chat/docs/faq.html#how-can-i-add-all-the-files-to-the-chat"
+        )
+        self.warning_given = True
 
     apply_update_errors = 0
 
@@ -941,13 +986,18 @@ class Coder:
             self.apply_update_errors += 1
             if self.apply_update_errors < self.max_apply_update_errors:
                 self.io.tool_error(f"Malformed response #{self.apply_update_errors}, retrying...")
+                self.io.tool_error("https://aider.chat/docs/faq.html#aider-isnt-editing-my-files")
                 self.io.tool_error(str(err))
                 return None, err
             else:
                 self.io.tool_error(f"Malformed response #{self.apply_update_errors}, aborting.")
+                self.io.tool_error("https://aider.chat/docs/faq.html#aider-isnt-editing-my-files")
                 self.io.tool_error(str(err))
                 return False, None
 
+        except git.exc.GitCommandError as err:
+            self.io.tool_error(str(err))
+            return False, None
         except Exception as err:
             print(err)
             print()

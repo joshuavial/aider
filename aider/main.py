@@ -1,4 +1,5 @@
 import argparse
+import configparser
 import os
 import sys
 from pathlib import Path
@@ -45,27 +46,40 @@ def guessed_wrong_repo(io, git_root, fnames, git_dname):
 
 
 def setup_git(git_root, io):
+    repo = None
     if git_root:
-        return git_root
+        repo = git.Repo(git_root)
+    elif io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
+        git_root = str(Path.cwd().resolve())
+        repo = git.Repo.init(git_root)
+        io.tool_output("Git repository created in the current working directory.")
+        check_gitignore(git_root, io, False)
 
-    if not io.confirm_ask("No git repo found, create one to track GPT's changes (recommended)?"):
+    if not repo:
         return
 
-    git_root = str(Path.cwd().resolve())
+    user_name = None
+    user_email = None
+    with repo.config_reader() as config:
+        try:
+            user_name = config.get_value("user", "name", None)
+        except configparser.NoSectionError:
+            pass
+        try:
+            user_email = config.get_value("user", "email", None)
+        except configparser.NoSectionError:
+            pass
 
-    check_gitignore(git_root, io, False)
+    if user_name and user_email:
+        return repo.working_tree_dir
 
-    repo = git.Repo.init(git_root)
-    global_git_config = git.GitConfigParser([str(Path.home() / ".gitconfig")], read_only=True)
     with repo.config_writer() as git_config:
-        if not global_git_config.has_option("user", "name"):
+        if not user_name:
             git_config.set_value("user", "name", "Your Name")
             io.tool_error('Update git name with: git config user.name "Your Name"')
-        if not global_git_config.has_option("user", "email"):
+        if not user_email:
             git_config.set_value("user", "email", "you@example.com")
             io.tool_error('Update git email with: git config user.email "you@example.com"')
-
-    io.tool_output("Git repository created in the current working directory.")
 
     return repo.working_tree_dir
 
@@ -145,11 +159,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         env_var="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
     )
+    default_model = "gpt-4-1106-preview"
     core_group.add_argument(
         "--model",
         metavar="MODEL",
-        default=models.GPT4_0613.name,
-        help=f"Specify the model to use for the main chat (default: {models.GPT4_0613.name})",
+        default=default_model,
+        help=f"Specify the model to use for the main chat (default: {default_model})",
     )
     core_group.add_argument(
         "--skip-model-availability-check",
@@ -157,23 +172,34 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         default=False,
         help="Override to skip model availability check (default: False)",
     )
+    default_4_model = "gpt-4-0613"
+    core_group.add_argument(
+        "--4",
+        "-4",
+        action="store_const",
+        dest="model",
+        const=default_4_model,
+        help=f"Use {default_4_model} model for the main chat",
+    )
     default_4_turbo_model = "gpt-4-1106-preview"
     core_group.add_argument(
-        "--4-turbo",
         "--4turbo",
-        "--4",
+        "--4-turbo",
         action="store_const",
         dest="model",
         const=default_4_turbo_model,
-        help=f"Use {default_4_turbo_model} model for the main chat (gpt-4 is better)",
+        help=f"Use {default_4_turbo_model} model for the main chat",
     )
     default_3_model = models.GPT35_0125
     core_group.add_argument(
+        "--35turbo",
+        "--35-turbo",
+        "--3",
         "-3",
         action="store_const",
         dest="model",
         const=default_3_model.name,
-        help=f"Use {default_3_model.name} model for the main chat (gpt-4 is better)",
+        help=f"Use {default_3_model.name} model for the main chat",
     )
     core_group.add_argument(
         "--voice-language",
@@ -207,6 +233,12 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         metavar="OPENAI_API_DEPLOYMENT_ID",
         env_var="OPENAI_API_DEPLOYMENT_ID",
         help="Specify the deployment_id",
+    )
+    model_group.add_argument(
+        "--openai-organization-id",
+        metavar="OPENAI_ORGANIZATION_ID",
+        env_var="OPENAI_ORGANIZATION_ID",
+        help="Specify the OpenAI organization ID",
     )
     model_group.add_argument(
         "--openrouter",
@@ -521,7 +553,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         for arg, val in sorted(vars(args).items()):
             io.tool_output(f"  - {arg}: {scrub_sensitive_info(str(val))}")
 
-    io.tool_output(*sys.argv, log_only=True)
+    io.tool_output(*map(scrub_sensitive_info, sys.argv), log_only=True)
 
     if not args.openai_api_key:
         if os.name == "nt":
@@ -550,6 +582,8 @@ def main(argv=None, input=None, output=None, force_git_root=None):
                     "HTTP-Referer": "http://aider.chat",
                     "X-Title": "Aider",
                 }
+        if args.openai_organization_id:
+            kwargs["organization"] = args.openai_organization_id
 
         client = openai.OpenAI(api_key=args.openai_api_key, **kwargs)
 

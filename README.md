@@ -3,10 +3,10 @@
 
 Aider is a command line tool that lets you pair program with GPT-3.5/GPT-4,
 to edit code stored in your local git repository.
-You can start a new project or work with an existing repo.
-Aider makes sure edits from GPT are
-[committed to git](https://aider.chat/docs/faq.html#how-does-aider-use-git)
+Aider will directly edit the code in your local source files,
+and [git commit the changes](https://aider.chat/docs/faq.html#how-does-aider-use-git)
 with sensible commit messages.
+You can start a new project or work with an existing git repo.
 Aider is unique in that it lets you ask for changes to [pre-existing, larger codebases](https://aider.chat/docs/repomap.html).
 
 <p align="center">
@@ -23,28 +23,15 @@ Aider is unique in that it lets you ask for changes to [pre-existing, larger cod
 - [Example chat transcripts](#example-chat-transcripts)
 - [Features](#features)
 - [Usage](#usage)
+- [Tutorial videos](https://aider.chat/docs/install.html#tutorial-videos)
 - [In-chat commands](#in-chat-commands)
 - [Tips](#tips)
-- [GPT-4 vs GPT-3.5](https://aider.chat/docs/faq.html#gpt-4-vs-gpt-35)
 - [Installation](https://aider.chat/docs/install.html)
 - [Voice-to-code](https://aider.chat/docs/voice.html)
 - [FAQ](https://aider.chat/docs/faq.html)
 - [Discord](https://discord.gg/Tv2uQnR88V)
+- [Blog](https://aider.chat/blog/)
 
-## GPT-4 Turbo with 128k context and unified diffs
-
-Aider supports OpenAI's new GPT-4 model that has the massive 128k context window.
-Benchmark results indicate that it is
-[very fast](https://aider.chat/2023/11/06/benchmarks-speed-1106.html),
-and a bit [better at coding](https://aider.chat/docs/benchmarks-1106.html) than previous GPT-4 models.
-
-Aider now supports a [unified diff editing format, which reduces GPT-4 Turbo's "lazy" coding](https://aider.chat/docs/unified-diffs.html).
-
-To use it, run aider like this:
-
-```
-aider --4turbo
-```
 
 ## Getting started
 

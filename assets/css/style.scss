@@ -11,10 +11,36 @@
   margin-top: 0;
   margin-left: 0.75rem;
 }
+.post {
+  background: #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  margin-bottom: 2em;
+  padding: 1em;
+  border-radius: 4px;
+}
 .post-date {
   color: #777;
   font-size: 0.85em;
-  margin-bottom: 0.5em;
+  margin-bottom: 1em;
+  display: block;
+}
+
+.post-highlight {
+  max-width: 20em; /* Assuming the base font-size is 16px, 12.5em is equivalent to 200px */
+  margin-right: 1em;
+  margin-left: 1em;
+}
+
+@media (max-width: 768px) {
+  .post-highlight {
+    max-width: 30em; /* Larger size on mobile */
+  }
+}
+
+.post-content {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
 }
 
 .chat-transcript {
