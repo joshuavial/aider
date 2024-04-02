@@ -1,4 +1,12 @@
+
 # Release history
+
+### v0.27.0
+
+- Improved repomap support for typescript, by @ryanfreckleton.
+- Bugfix: Only /undo the files which were part of the last commit, don't stomp other dirty files
+- Bugfix: Show clear error message when OpenAI API key is not set.
+- Bugfix: Catch error for obscure languages without tags.scm file.
 
 ### v0.26.1
 
