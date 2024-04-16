@@ -70,7 +70,7 @@ class Coder:
         from . import EditBlockCoder, UnifiedDiffCoder, WholeFileCoder
 
         if not main_model:
-            main_model = models.GPT4
+            main_model = models.Model.create(models.DEFAULT_MODEL_NAME)
 
         if not skip_model_availabily_check and not main_model.always_available:
             if not check_model_availability(io, client, main_model):
@@ -308,7 +308,7 @@ class Coder:
             self.fence = self.fences[0]
             self.io.tool_error(
                 "Unable to find a fencing strategy! Falling back to:"
-                " {self.fence[0]}...{self.fence[1]}"
+                f" {self.fence[0]}...{self.fence[1]}"
             )
 
         return

@@ -137,11 +137,17 @@ class GitRepo:
 
     def get_diffs(self, fnames=None):
         # We always want diffs of index and working dir
+
+        current_branch_has_commits = False
         try:
-            commits = self.repo.iter_commits(self.repo.active_branch)
-            current_branch_has_commits = any(commits)
-        except git.exc.GitCommandError:
-            current_branch_has_commits = False
+            active_branch = self.repo.active_branch
+            try:
+                commits = self.repo.iter_commits(active_branch)
+                current_branch_has_commits = any(commits)
+            except git.exc.GitCommandError:
+                pass
+        except TypeError:
+            pass
 
         if not fnames:
             fnames = []
@@ -209,7 +215,10 @@ class GitRepo:
         if not self.aider_ignore_file or not self.aider_ignore_file.is_file():
             return
 
-        fname = self.normalize_path(fname)
+        try:
+            fname = self.normalize_path(fname)
+        except ValueError:
+            return
 
         mtime = self.aider_ignore_file.stat().st_mtime
         if mtime != self.aider_ignore_ts:

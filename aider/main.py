@@ -159,7 +159,7 @@ def main(argv=None, input=None, output=None, force_git_root=None):
         env_var="OPENAI_API_KEY",
         help="Specify the OpenAI API key",
     )
-    default_model = "gpt-4-1106-preview"
+    default_model = models.DEFAULT_MODEL_NAME
     core_group.add_argument(
         "--model",
         metavar="MODEL",
@@ -544,7 +544,9 @@ def main(argv=None, input=None, output=None, force_git_root=None):
 
     def scrub_sensitive_info(text):
         # Replace sensitive information with placeholder
-        return text.replace(args.openai_api_key, "***")
+        if text and args.openai_api_key:
+            return text.replace(args.openai_api_key, "***")
+        return text
 
     if args.verbose:
         show = scrub_sensitive_info(parser.format_values())

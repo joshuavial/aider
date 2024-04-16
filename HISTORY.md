@@ -1,6 +1,19 @@
 
 # Release history
 
+### main
+
+- Allow `/add` of images from anywhere in the filesystem.
+- Fixed crash when operating in a repo in a detached HEAD state.
+- Fix: Use the same default model in CLI and python scripting.
+
+### v0.28.0
+
+- Added support for new `gpt-4-turbo-2024-04-09` and `gpt-4-turbo` models.
+  - Benchmarked at 61.7% on Exercism benchmark, comparable to `gpt-4-0613` and worse than the `gpt-4-preview-XXXX` models. See [recent Exercism benchmark results](https://aider.chat/2024/03/08/claude-3.html).
+  - Benchmarked at 34.1% on the refactoring/laziness benchmark, significantly worse than the `gpt-4-preview-XXXX` models. See [recent refactor bencmark results](https://aider.chat/2024/01/25/benchmarks-0125.html).
+  - Aider continues to default to `gpt-4-1106-preview` as it performs best on both benchmarks, and significantly better on the refactoring/laziness benchmark.
+
 ### v0.27.0
 
 - Improved repomap support for typescript, by @ryanfreckleton.
@@ -127,7 +140,7 @@
 
 - [Improved repository map using tree-sitter](https://aider.chat/docs/repomap.html)
 - Switched from "edit block" to "search/replace block", which reduced malformed edit blocks. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 66.2%, no regression.
-- Improved handling of malformed edit blocks targetting multiple edits to the same file. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 65.4%, no regression.
+- Improved handling of malformed edit blocks targeting multiple edits to the same file. [Benchmarked](https://aider.chat/docs/benchmarks.html) at 65.4%, no regression.
 - Bugfix to properly handle malformed `/add` wildcards.
 
 
